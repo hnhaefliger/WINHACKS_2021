@@ -34,6 +34,9 @@ class FacilitySerializer(serializers.Serializer):
         Todo:
             - Validate location
         '''
+        data['name'] = data['name'].lower()
+        data['location'] = data['location'].lower()
+        
         try:
             Facility.objects.get(name=data['name'])
             

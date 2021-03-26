@@ -5,6 +5,7 @@ from rest_framework.exceptions import NotFound
 
 from .serializers import EquipmentSerializer
 from .models import Equipment
+from facilities.models import Facility
 
 class EquipmentViewSet(viewsets.ViewSet):
     '''
@@ -55,8 +56,20 @@ class EquipmentViewSet(viewsets.ViewSet):
         List all pieces of equipment.
         '''
         data = []
+        
+        filtered = Equipment.objects.all()
 
-        for equipment in Equipment.objects.all():
+        if 'instrument' in request.GET:
+            filtered = filtered.filter(instrument=request.GET['instrument'].lower())
+
+        if 'facility' in request.GET:
+            try:
+                facility = Facility.objects.get(public_id=request.GET['facility'])
+                filtered = filtered.filter(facility=facility)
+
+            except: pass
+
+        for equipment in filtered:
             data.append({
                 'id': equipment.public_id,
                 'instrument': equipment.instrument,

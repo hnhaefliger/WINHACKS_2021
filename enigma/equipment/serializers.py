@@ -48,6 +48,8 @@ class EquipmentSerializer(serializers.Serializer):
         '''
         Validation for equipment.
         '''
+        data['instrument'] = data['instrument'].lower()
+
         try:
             facility = Facility.objects.get(public_id=data['facility'])
 
