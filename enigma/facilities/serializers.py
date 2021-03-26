@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Facility
+from rest_framework.exceptions import NotAcceptable
 
 class FacilitySerializer(serializers.Serializer):
     '''
@@ -30,4 +31,16 @@ class FacilitySerializer(serializers.Serializer):
         '''
         Validation for facility.
         '''
-        return data
+        try:
+            Facility.objects.get(name=data['name'])
+            
+        except:
+            try:
+                Facility.objects.get(location=data['location'])
+
+            except:
+                return data
+
+            raise NotAcceptable('There is already a facility at this address.')
+
+        raise NotAcceptable('A facility with this name already exists.')
