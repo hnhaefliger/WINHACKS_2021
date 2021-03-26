@@ -30,6 +30,9 @@ class FacilitySerializer(serializers.Serializer):
     def validate(self, data):
         '''
         Validation for facility.
+
+        Todo:
+            - Validate location
         '''
         try:
             Facility.objects.get(name=data['name'])

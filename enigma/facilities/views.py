@@ -40,7 +40,7 @@ class FacilityViewSet(viewsets.ViewSet):
     
     def get(self, request, *args, **kwargs):
         '''
-        List all facilities
+        List all facilities.
         '''
         data = []
 

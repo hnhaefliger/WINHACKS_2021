@@ -1,8 +1,8 @@
 from rest_framework import routers
-from .views import PlaceholderViewSet
+from .views import EquipmentViewSet
 
 router = routers.DefaultRouter()
 
-router.register('', PlaceholderViewSet, basename='')
+router.register('', EquipmentViewSet, basename='')
 
 urlpatterns = router.urls
