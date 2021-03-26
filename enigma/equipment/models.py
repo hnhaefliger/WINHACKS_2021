@@ -29,3 +29,6 @@ class Equipment(models.Model):
     samples = models.IntegerField(default=0)
 
     facility = models.ForeignKey('facilities.facility', on_delete=models.SET_NULL, null=True, to_field='public_id')
+
+    def __str__(self):
+        return self.public_id + ' - ' + self.instrument
