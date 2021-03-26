@@ -14,6 +14,10 @@ class Equipment(models.Model):
         - # of samples processed
         - (Facility)
     '''
+    class Meta:
+        verbose_name = 'Equipment'
+        verbose_name_plural = 'Equipment'
+
     public_id = models.CharField(max_length=32, default=createUUID, editable=False, unique=True)
 
     instrument = models.CharField(max_length=128)

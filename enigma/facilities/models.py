@@ -11,6 +11,10 @@ class Facility(models.Model):
         - Location
         - List of equipment housed there (will be stored in the equipment data)
     '''
+    class Meta:
+        verbose_name = 'Facility'
+        verbose_name_plural = 'Facilities'
+
     public_id = models.CharField(max_length=32, default=createUUID, editable=False, unique=True)
 
     name = models.CharField(max_length=256)
