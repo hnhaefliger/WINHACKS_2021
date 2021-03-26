@@ -21,7 +21,7 @@ class EquipmentViewSet(viewsets.ViewSet):
             equipment = Equipment.objects.get(public_id=kwargs['lookup_value'])
             return Response(data={
                 'id': equipment.public_id,
-                'instrument': equipment.instrument,
+                'instrument': equipment.instrument.name,
                 'trained': equipment.trained,
                 'researchers': equipment.researchers,
                 'publications': equipment.publications,
@@ -42,7 +42,7 @@ class EquipmentViewSet(viewsets.ViewSet):
         equipment = serializer.save()
         return Response(data={
             'id': equipment.public_id,
-            'instrument': equipment.instrument,
+            'instrument': equipment.instrument.name,
             'trained': equipment.trained,
             'researchers': equipment.researchers,
             'publications': equipment.publications,
@@ -72,7 +72,7 @@ class EquipmentViewSet(viewsets.ViewSet):
         for equipment in filtered:
             data.append({
                 'id': equipment.public_id,
-                'instrument': equipment.instrument,
+                'instrument': equipment.instrument.name,
                 'trained': equipment.trained,
                 'researchers': equipment.researchers,
                 'publications': equipment.publications,

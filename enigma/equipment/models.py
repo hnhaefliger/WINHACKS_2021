@@ -20,7 +20,7 @@ class Equipment(models.Model):
 
     public_id = models.CharField(max_length=32, default=createUUID, editable=False, unique=True)
 
-    instrument = models.CharField(max_length=128)
+    instrument = models.ForeignKey('instruments.Instrument', on_delete=models.SET_NULL, null=True, to_field='public_id')
 
     trained = models.IntegerField(default=0)
     researchers = models.IntegerField(default=0)
@@ -28,7 +28,7 @@ class Equipment(models.Model):
     students = models.IntegerField(default=0)
     samples = models.IntegerField(default=0)
 
-    facility = models.ForeignKey('facilities.facility', on_delete=models.SET_NULL, null=True, to_field='public_id')
+    facility = models.ForeignKey('facilities.Facility', on_delete=models.SET_NULL, null=True, to_field='public_id')
 
     def __str__(self):
-        return self.public_id + ' - ' + self.instrument
+        return self.public_id + ' - ' + self.instrument.name

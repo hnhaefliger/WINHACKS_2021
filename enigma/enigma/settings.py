@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'frontend',
     'equipment',
     'facilities',
+    'instruments',
 ]
 
 MIDDLEWARE = [

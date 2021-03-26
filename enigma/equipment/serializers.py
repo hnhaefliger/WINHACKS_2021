@@ -3,6 +3,7 @@ from rest_framework.exceptions import NotFound
 
 from .models import Equipment
 from facilities.models import Facility
+from instruments.models import Instrument
 
 class EquipmentSerializer(serializers.Serializer):
     '''
@@ -48,7 +49,11 @@ class EquipmentSerializer(serializers.Serializer):
         '''
         Validation for equipment.
         '''
-        data['instrument'] = data['instrument'].lower()
+        try:
+            instrument = Instrument.objects.get(name=data['instrument'])
+
+        except:
+            raise NotFound({'instrument': 'This instrument does not exist'})
 
         try:
             facility = Facility.objects.get(public_id=data['facility'])
@@ -56,5 +61,7 @@ class EquipmentSerializer(serializers.Serializer):
         except:
             raise NotFound({'facility': 'This facility does not exist'})
 
+        data['instrument'] = instrument
         data['facility'] = facility
+            
         return data
