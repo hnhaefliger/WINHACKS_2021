@@ -27,7 +27,11 @@ class EquipmentViewSet(viewsets.ViewSet):
                 'publications': equipment.publications,
                 'students': equipment.students,
                 'samples': equipment.samples,
-                'facility': equipment.facility.public_id,
+                'facility': {
+                    'id': equipment.facility.public_id,
+                    'name': equipment.facility.name,
+                    'location': equipment.facility.location,
+                },
             }, status=status.HTTP_200_OK)
 
         except:
@@ -48,7 +52,11 @@ class EquipmentViewSet(viewsets.ViewSet):
             'publications': equipment.publications,
             'students': equipment.students,
             'samples': equipment.samples,
-            'facility': equipment.facility.public_id,
+            'facility': {
+                    'id': equipment.facility.public_id,
+                    'name': equipment.facility.name,
+                    'location': equipment.facility.location,
+            },
         }, status=status.HTTP_200_OK)
     
     def get(self, request, *args, **kwargs):
@@ -78,7 +86,11 @@ class EquipmentViewSet(viewsets.ViewSet):
                 'publications': equipment.publications,
                 'students': equipment.students,
                 'samples': equipment.samples,
-                'facility': equipment.facility.public_id,
+                'facility': {
+                    'id': equipment.facility.public_id,
+                    'name': equipment.facility.name,
+                    'location': equipment.facility.location,
+                },
             })
 
         return Response(data=data, status=status.HTTP_200_OK)

@@ -50,16 +50,24 @@ class EquipmentSerializer(serializers.Serializer):
         Validation for equipment.
         '''
         try:
-            instrument = Instrument.objects.get(name=data['instrument'])
+            instrument = Instrument.objects.get(public_id=data['instrument'])
 
         except:
-            raise NotFound({'instrument': 'This instrument does not exist'})
+            try:
+                instrument = Instrument.objects.get(name=data['instrument'])
+
+            except:
+                raise NotFound({'instrument': 'This instrument does not exist'})
 
         try:
             facility = Facility.objects.get(public_id=data['facility'])
 
         except:
-            raise NotFound({'facility': 'This facility does not exist'})
+            try:
+                facility = Facility.objects.get(name=data['facility'])
+
+            except:
+                raise NotFound({'facility': 'This facility does not exist'})
 
         data['instrument'] = instrument
         data['facility'] = facility
