@@ -1,201 +1,140 @@
 mapboxgl.accessToken = 'pk.eyJ1Ijoiam9lYWxmIiwiYSI6ImNrbXIyNHF3YTAzcHoydnBuc2x1YjRyZ3QifQ.UbmitObJVmkFyJFSC2o5cQ'; // this is also bad - remember to revoke access
 
-navigator.geolocation.getCurrentPosition(position => { 
-    var features = [];
+var equipment = {};
+var instruments = []
+var facilities = [];
 
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                // Does this cookie string begin with the name we want?
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
+const setEquipment = (id, value) => {
+    equipment[id] = value;
+}
+
+const setInstruments = (values) => {
+    instruments = values;
+}
+
+const setFacilities = (values) => {
+    facilities = values;
+}
+
+const getEquipment = () => {
+    return $.ajax({
+        url: '/api/facilities/',
+        async: false,
+        success: (facilities) => {
+            facilities.forEach((facility) => {
+                $.ajax({
+                    type: 'GET',
+                    async: false,
+                    url: 'api/equipment/?facility=' + facility.id,
+                    success: (equip) => {
+                        setEquipment(facility.id, equip)
+                    },
+                });
+            });
+        },
+    })
+}
+
+const getInstruments = () => {
+    return $.ajax({
+        type: 'GET',
+        async: false,
+        url: 'api/instruments/',
+        success: (response) => {
+            setInstruments(response)
+        },
+    })
+}
+
+const getFacilities = () => {
+    return $.ajax({
+        url: '/api/facilities/',
+        async: false,
+        success: (response) => {
+            setFacilities(response);
+        },
+    });
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
             }
         }
-        return cookieValue;
     }
-    const csrftoken = getCookie('csrftoken');
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
 
-    const makeFeatures = (list) => {
-        feat = []
+const formatFeatures = () => {
+    features = [];
+    facilities.forEach(facility => {
+        const location = facility.location.split(',');
 
-        list.forEach(element => {
-            const loc = element.location.split(',');
-
-            feat.push({
-                'type': 'Feature',
-                'geometry': {
-                    'type': 'Point',
-                    'coordinates': [parseFloat(loc[8]), parseFloat(loc[7])]
-                },
-                'properties': {
-                    'title': element.name,
-                    'description': makeDescription(element),
-                }
-            })
-        });
-
-        return feat;
-    }
-
-    const addFacility = () => {
-        const name = document.getElementById('facilitynameinput').value;
-        const address = document.getElementById('facilityaddressinput').value;
-        const postalcode = document.getElementById('facilitypostalcodeinput').value;
-        const region = document.getElementById('facilityregioninput').value;
-        const country = document.getElementById('facilitycountryinput').value;
-
-        if (name && address && postalcode && region && country) {
-            const location = address + ',' + postalcode + ',' + region + ',' + country
-            $.ajax({
-                type: 'POST',
-                url: 'api/facilities/',
-                headers: {'X-CSRFToken': csrftoken},
-                data: {
-                    'name': name,
-                    'location': location,
-                },
-                dataType: "json",
-                success: (res) => {
-                    document.getElementById('facilitynameinput').value = '';
-                    document.getElementById('facilityaddressinput').value = '';
-                    document.getElementById('facilitypostalcodeinput').value = '';
-                    document.getElementById('facilityregioninput').value = '';
-                    document.getElementById('facilitycountryinput').value = '';
-
-                    fetchFacilities();
-                    getEquipment();
-                },
-                error: (err) => {
-                    console.log(err);
-                    alert('Something went wrong');
-                }
-            });
-        } else {
-            alert('Please fill in all fields');
-        }
-    }
-
-    const newFacilityButton = document.getElementById('createfacility')
-
-    if (newFacilityButton) {
-        newFacilityButton.addEventListener('click', (event) => {
-            addFacility();
-        });
-    };
-
-    const addInstrument = () => {
-        const facility = document.getElementById('facilityid').value;
-        const instrument = document.getElementById('instrumenttypeinput').value;
-        const trained = document.getElementById('instrumenttrainedinput').value;
-        const researchers = document.getElementById('instrumentresearchersinput').value;
-        const students = document.getElementById('instrumentstudentsinput').value;
-        const publications = document.getElementById('instrumentpublicationsinput').value;
-        const samples = document.getElementById('instrumentsamplesinput').value;
-
-        if (facility && instrument && trained && researchers && students && publications && samples) {
-            $.ajax({
-                type: 'POST',
-                url: 'api/equipment/',
-                headers: {'X-CSRFToken': csrftoken},
-                data: {
-                    'facility': facility,
-                    'instrument': instrument,
-                    'trained': trained,
-                    'researchers': researchers,
-                    'students': students,
-                    'publications': publications,
-                    'samples': samples,
-                },
-                dataType: "json",
-                success: (res) => {
-                    document.getElementById('facilityid').value = '';
-                    document.getElementById('instrumenttypeinput').value = '';
-                    document.getElementById('instrumenttrainedinput').value = '';
-                    document.getElementById('instrumentresearchersinput').value = '';
-                    document.getElementById('instrumentstudentsinput').value = '';
-                    document.getElementById('instrumentpublicationsinput').value = '';
-                    document.getElementById('instrumentsamplesinput').value = '';
-
-                    getEquipment();
-                },
-                error: (err) => {
-                    console.log(err);
-                    alert('Something went wrong');
-                }
-            });
-        } else {
-            alert('Please fill in all fields');
-        }
-    }
-
-    var instruments = '';
-
-    const getInstruments = () => {
-        $.ajax({
-            type: 'GET',
-            url: 'api/instruments/',
-            success: (res) => {
-                res.forEach((instrument) => {
-                    instruments += `<option value="${instrument.name}">${instrument.name}</option>`
-                })  
+        features.push({
+            'type': 'Feature',
+            'geometry': {
+                'type': 'Point',
+                'coordinates': [parseFloat(location[8]), parseFloat(location[7])]
             },
+            'properties': {
+                'title': facility.name,
+                'description': makeDescription(facility),
+            }
         });
-    }
+    });
 
-    var equipment = {};
+    return features;
+}
 
-    const getEquipment = () => {
-        $.ajax({
-            url: '/api/facilities/',
-            success: (resp) => {
-                resp.forEach((response) => {
-                    $.ajax({
-                        type: 'GET',
-                        url: 'api/equipment/?facility=' + response.id,
-                        success: (res) => {
-                            var t = `<thead><tr>
-                                        <th scope="col">Instrument</th>
-                                        <th scope="col">Trained</th>
-                                        <th scope="col">Researchers</th>
-                                        <th scope="col">Students</th>
-                                        <th scope="col">Publications</th>
-                                        <th scope="col">Samples</th>
-                                        <th scope="col"></th>
-                                    </tr></thead><tbody>`;
-                            res.forEach((instrument) => {
-                                t += `
-                                <tr>
-                                    <td>${instrument.instrument}</td>
-                                    <td>${instrument.trained}</td>
-                                    <td>${instrument.researchers}</td>
-                                    <td>${instrument.students}</td>
-                                    <td>${instrument.publications}</td>
-                                    <td>${instrument.samples}</td>
-                                    <td><button type="button" value="${instrument.id}" class="btn btn-sm ${instrument.in_use ? 'btn-danger' : 'btn-success'} bookequipment">${instrument.in_use ? 'In use' : 'Free'}</button></td>
-                                </tr>
-                                `;
-                            });
-                            equipment[response.id] = t + '</tbody>';
-                        },
-                    });
-                });
-            },
-        });
-    }
+const formatInstruments = () => {
+    formatted = '';
+    instruments.forEach(instrument => {
+        formatted += `<option value="${instrument.name}">${instrument.name}</option>`
+    })
+    return formatted;
+}
 
-    getEquipment();
-    getInstruments();
+const formatEquipment = (facility) => {
+    formatted = `
+                <thead><tr>
+                    <th scope="col">Instrument</th>
+                    <th scope="col">Trained</th>
+                    <th scope="col">Researchers</th>
+                    <th scope="col">Students</th>
+                    <th scope="col">Publications</th>
+                    <th scope="col">Samples</th>
+                    <th scope="col"></th>
+                </tr></thead><tbody>
+    `;
+    equipment[facility].forEach(equip => {
+        formatted += `
+            <tr>
+                <td>${equip.instrument}</td>
+                <td>${equip.trained}</td>
+                <td>${equip.researchers}</td>
+                <td>${equip.students}</td>
+                <td>${equip.publications}</td>
+                <td>${equip.samples}</td>
+                <td><button type="button" value="${equip.id}" class="btn btn-sm ${equip.in_use ? 'btn-danger' : 'btn-success'} bookequipment">${equip.in_use ? 'In use' : 'Free'}</button></td>
+            </tr>
+        `;
+    });
+    return formatted;
+}
 
-    const makeDescription = (element) => {
-        return `
+const makeDescription = (facility) => {
+    return `
                 <div class="tablecontainer">
-                    <table id="equipmenttable_${element.id}" class="table table-bordered table-striped mb-0">
-                        ${equipment[element.id]}
+                    <table id="equipmenttable_${facility.id}" class="table table-bordered table-striped mb-0">
+                        ${formatEquipment(facility.id)}
                     </table>
                 </div>
                 <form class="instrumentform" id="addinstrumentform">
@@ -203,7 +142,7 @@ navigator.geolocation.getCurrentPosition(position => {
                     <div class="form-group">
                         <label for="exampleInputEmail1">Instrument</label>
                         <select class="form-control" id="instrumenttypeinput" placeholder="Choose an instrument type">
-                            ${instruments}
+                            ${formatInstruments()}
                         </select> 
                     </div>
                     <div class="row">
@@ -239,26 +178,14 @@ navigator.geolocation.getCurrentPosition(position => {
                                 <input type="email" class="form-control" id="instrumentsamplesinput" placeholder="#">
                             </div>
                         </div>
-                        <input type="hidden" id="facilityid" value="${element.id}" />
+                        <input type="hidden" id="facilityid" value="${facility.id}" />
                     </div>
                     <button type="button" id="addinstrument" class="btn btn-primary addinstrument">Add</button>
                 </form>
-        `;
-    }
+    `;
+}
 
-    const fetchFacilities = () => {
-        $.ajax({
-            url: '/api/facilities/',
-            success: (res) => {
-                const data = makeFeatures(res);
-                map.getSource('places').setData({
-                    'type': 'FeatureCollection',
-                    'features': data,
-                });
-            },
-        });
-    }
-
+navigator.geolocation.getCurrentPosition(position => { 
     var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/light-v10',
@@ -266,6 +193,106 @@ navigator.geolocation.getCurrentPosition(position => {
         zoom: 5,
         cluster: false
     });
+
+    const updateMap = () => {
+        const res1 = getFacilities();
+        const res2 = getInstruments();
+        const res3 = getEquipment();
+
+        map.getSource('places').setData({
+            'type': 'FeatureCollection',
+            'features': formatFeatures(),
+        })   
+    }
+
+    const addFacility = () => {
+        const name = document.getElementById('facilitynameinput').value;
+        const address = document.getElementById('facilityaddressinput').value;
+        const postalcode = document.getElementById('facilitypostalcodeinput').value;
+        const region = document.getElementById('facilityregioninput').value;
+        const country = document.getElementById('facilitycountryinput').value;
+    
+        if (name && address && postalcode && region && country) {
+            const location = address + ',' + postalcode + ',' + region + ',' + country
+            $.ajax({
+                type: 'POST',
+                url: 'api/facilities/',
+                headers: {'X-CSRFToken': csrftoken},
+                data: {
+                    'name': name,
+                    'location': location,
+                },
+                dataType: "json",
+                success: (res) => {
+                    document.getElementById('facilitynameinput').value = '';
+                    document.getElementById('facilityaddressinput').value = '';
+                    document.getElementById('facilitypostalcodeinput').value = '';
+                    document.getElementById('facilityregioninput').value = '';
+                    document.getElementById('facilitycountryinput').value = '';
+    
+                    getFacilities();
+                    getEquipment();
+                },
+                error: (err) => {
+                    alert('Something went wrong');
+                }
+            });
+        } else {
+            alert('Please fill in all fields');
+        }
+    }
+    
+    const addInstrument = () => {
+        const facility = document.getElementById('facilityid').value;
+        const instrument = document.getElementById('instrumenttypeinput').value;
+        const trained = document.getElementById('instrumenttrainedinput').value;
+        const researchers = document.getElementById('instrumentresearchersinput').value;
+        const students = document.getElementById('instrumentstudentsinput').value;
+        const publications = document.getElementById('instrumentpublicationsinput').value;
+        const samples = document.getElementById('instrumentsamplesinput').value;
+    
+        if (facility && instrument && trained && researchers && students && publications && samples) {
+            $.ajax({
+                type: 'POST',
+                url: 'api/equipment/',
+                headers: {'X-CSRFToken': csrftoken},
+                data: {
+                    'facility': facility,
+                    'instrument': instrument,
+                    'trained': trained,
+                    'researchers': researchers,
+                    'students': students,
+                    'publications': publications,
+                    'samples': samples,
+                },
+                dataType: "json",
+                success: (res) => {
+                    document.getElementById('facilityid').value = '';
+                    document.getElementById('instrumenttypeinput').value = '';
+                    document.getElementById('instrumenttrainedinput').value = '';
+                    document.getElementById('instrumentresearchersinput').value = '';
+                    document.getElementById('instrumentstudentsinput').value = '';
+                    document.getElementById('instrumentpublicationsinput').value = '';
+                    document.getElementById('instrumentsamplesinput').value = '';
+    
+                    updateMap();
+                },
+                error: (err) => {
+                    alert('Something went wrong');
+                }
+            });
+        } else {
+            alert('Please fill in all fields');
+        }
+    }
+    
+    const newFacilityButton = document.getElementById('createfacility')
+    
+    if (newFacilityButton) {
+        newFacilityButton.addEventListener('click', (event) => {
+            updateMap();
+        });
+    };
 
     map.on('load', function () {
         map.loadImage(
@@ -342,6 +369,7 @@ navigator.geolocation.getCurrentPosition(position => {
                                     },
                                     dataType: "json",
                                     success: (res) => {
+                                        updateMap();
                                     },
                                     error: (err) => {
                                         alert('Something went wrong');
@@ -360,6 +388,7 @@ navigator.geolocation.getCurrentPosition(position => {
                                     },
                                     dataType: "json",
                                     success: (res) => {
+                                        updateMap();
                                     },
                                     error: (err) => {
                                         alert('Something went wrong');
@@ -380,9 +409,8 @@ navigator.geolocation.getCurrentPosition(position => {
                     map.getCanvas().style.cursor = '';
                 });
 
-                fetchFacilities();
+                updateMap();
             }
         );
     });
 });
-
