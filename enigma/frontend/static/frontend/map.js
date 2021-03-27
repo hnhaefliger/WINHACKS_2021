@@ -2,6 +2,23 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoiam9lYWxmIiwiYSI6ImNrbXIyNHF3YTAzcHoydnBuc2x1Y
 
 var features = [];
 
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
 const makeFeatures = (list) => {
     feat = []
 
@@ -26,10 +43,45 @@ const makeFeatures = (list) => {
 
 const addInstrument = () => {
     const facility = document.getElementById('facilityid').value;
-    console.log(facility);
-    const instrument = document.getElementById('insturmenttypeinput').value;
+    const instrument = document.getElementById('instrumenttypeinput').value;
     const trained = document.getElementById('instrumenttrainedinput').value;
-    const researchers = document.getElementById('instrumentresearchers')
+    const researchers = document.getElementById('instrumentresearchersinput').value;
+    const students = document.getElementById('instrumentstudentsinput').value;
+    const publications = document.getElementById('instrumentpublicationsinput').value;
+    const samples = document.getElementById('instrumentsamplesinput').value;
+
+    if (facility && instrument && trained && researchers && students && publications && samples) {
+        $.ajax({
+            type: 'POST',
+            url: 'api/equipment/',
+            headers: {'X-CSRFToken': csrftoken},
+            data: {
+                'facility': facility,
+                'instrument': instrument,
+                'trained': trained,
+                'researchers': researchers,
+                'students': students,
+                'publications': publications,
+                'samples': samples,
+            },
+            dataType: "json",
+            success: (res) => {
+                document.getElementById('facilityid').value = '';
+                document.getElementById('instrumenttypeinput').value = '';
+                document.getElementById('instrumenttrainedinput').value = '';
+                document.getElementById('instrumentresearchersinput').value = '';
+                document.getElementById('instrumentstudentsinput').value = '';
+                document.getElementById('instrumentpublicationsinput').value = '';
+                document.getElementById('instrumentsamplesinput').value = '';
+            },
+            error: (err) => {
+                console.log(err);
+                alert('Something went wrong');
+            }
+        });
+    } else {
+        alert('Please fill in all fields');
+    }
 }
 
 const makeDescription = (element) => {
@@ -80,12 +132,16 @@ const makeDescription = (element) => {
     `;
 }
 
-$.ajax({
-    url: '/api/facilities/',
-    success: (res) => {
-        features = makeFeatures(res);
-    },
-});
+const fetchFacilities = () => {
+    $.ajax({
+        url: '/api/facilities/',
+        success: (res) => {
+            features = makeFeatures(res);
+        },
+    });
+}
+
+fetchFacilities();
 
 navigator.geolocation.getCurrentPosition(position => { 
     var map = new mapboxgl.Map({

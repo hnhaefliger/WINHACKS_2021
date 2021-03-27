@@ -75,6 +75,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'enigma.wsgi.application'
 
 
+# Authentication
+DEFAULT_AUTHENTICATION_CLASSES: [
+    'rest_framework.authentication.SessionAuthentication',
+    'rest_framework.authentication.BasicAuthentication',
+]
+
+
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
@@ -123,3 +130,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# Rest framework
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
+    'DEFAULT_RENDERER_CLASSES': (
+    #   'rest_framework.renderers.XMLRenderer',
+    'rest_framework.renderers.JSONRenderer',
+    #   'rest_framework.renderers.BrowsableAPIRenderer',
+    )
+}
