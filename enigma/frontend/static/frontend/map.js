@@ -41,6 +41,43 @@ const makeFeatures = (list) => {
     return feat;
 }
 
+const addFacility = () => {
+    const name = document.getElementById('facilitynameinput').value;
+    const location = document.getElementById('facilitylocationinput').value;
+
+    if (name && location) {
+        $.ajax({
+            type: 'POST',
+            url: 'api/facilities/',
+            headers: {'X-CSRFToken': csrftoken},
+            data: {
+                'name': name,
+                'location': location,
+            },
+            dataType: "json",
+            success: (res) => {
+                document.getElementById('facilitynameinput').value = '';
+                document.getElementById('facilitylocationinput').value = '';
+                fetchFacilities();
+            },
+            error: (err) => {
+                console.log(err);
+                alert('Something went wrong');
+            }
+        });
+    } else {
+        alert('Please fill in all fields');
+    }
+}
+
+const newFacilityButton = document.getElementById('createfacility')
+
+if (newFacilityButton) {
+    newFacilityButton.addEventListener('click', (event) => {
+        addFacility();
+    });
+};
+
 const addInstrument = () => {
     const facility = document.getElementById('facilityid').value;
     const instrument = document.getElementById('instrumenttypeinput').value;
