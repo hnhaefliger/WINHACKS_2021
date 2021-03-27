@@ -188,6 +188,7 @@ navigator.geolocation.getCurrentPosition(position => {
         style: 'mapbox://styles/mapbox/light-v10',
         center: [position.coords.longitude, position.coords.latitude],
         zoom: 5,
+        cluster: false
     });
 
     map.on('load', function () {
@@ -198,6 +199,9 @@ navigator.geolocation.getCurrentPosition(position => {
                 map.addImage('custom-marker', image);
                 map.addSource('places', {
                     'type': 'geojson',
+                    cluster: false,
+                    clusterMinPoints: 1000,
+                    clusterRadius: 1,
                     'data': {
                         'type': 'FeatureCollection',
                         'features': [],
@@ -218,7 +222,6 @@ navigator.geolocation.getCurrentPosition(position => {
                         ],
                         'text-offset': [0, 1.25],
                         'text-anchor': 'top',
-                        'icon-allow-overlap': false,
                     }
                 });
 
