@@ -44,9 +44,13 @@ navigator.geolocation.getCurrentPosition(position => {
 
     const addFacility = () => {
         const name = document.getElementById('facilitynameinput').value;
-        const location = document.getElementById('facilitylocationinput').value;
+        const address = document.getElementById('facilityaddressinput').value;
+        const postalcode = document.getElementById('facilitypostalcodeinput').value;
+        const region = document.getElementById('facilityregioninput').value;
+        const country = document.getElementById('facilitycountryinput').value;
 
-        if (name && location) {
+        if (name && address && postalcode && region && country) {
+            const location = address + ',' + postalcode + ',' + region + ',' + country
             $.ajax({
                 type: 'POST',
                 url: 'api/facilities/',
@@ -58,7 +62,10 @@ navigator.geolocation.getCurrentPosition(position => {
                 dataType: "json",
                 success: (res) => {
                     document.getElementById('facilitynameinput').value = '';
-                    document.getElementById('facilitylocationinput').value = '';
+                    document.getElementById('facilityaddressinput').value = '';
+                    document.getElementById('facilitypostalcodeinput').value = '';
+                    document.getElementById('facilityregioninput').value = '';
+                    document.getElementById('facilitycountryinput').value = '';
                     fetchFacilities();
                 },
                 error: (err) => {
@@ -187,7 +194,7 @@ navigator.geolocation.getCurrentPosition(position => {
                         ${equipment[element.id]}
                     </table>
                 </div>
-                <form class="facilityform" id="createfacilityform">
+                <form class="instrumentform" id="addinstrumentform">
                     <h2>Add a new piece of equipment</h2>
                     <div class="form-group">
                         <label for="exampleInputEmail1">Instrument</label>
