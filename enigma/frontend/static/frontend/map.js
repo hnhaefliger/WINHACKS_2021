@@ -136,10 +136,57 @@ navigator.geolocation.getCurrentPosition(position => {
         });
     }
 
+    var equipment = {};
+
+    const getEquipment = () => {
+        $.ajax({
+            url: '/api/facilities/',
+            success: (resp) => {
+                resp.forEach((response) => {
+                    $.ajax({
+                        type: 'GET',
+                        url: 'api/equipment/?facility=' + response.id,
+                        success: (res) => {
+                            var t = `<thead><tr>
+                                        <th scope="col">Instrument</th>
+                                        <th scope="col">Trained</th>
+                                        <th scope="col">Researchers</th>
+                                        <th scope="col">Students</th>
+                                        <th scope="col">Publications</th>
+                                        <th scope="col">Samples</th>
+                                        <th scope="col"></th>
+                                    </tr></thead><tbody>`;
+                            res.forEach((instrument) => {
+                                t += `
+                                <tr>
+                                    <td>${instrument.instrument}</td>
+                                    <td>${instrument.trained}</td>
+                                    <td>${instrument.researchers}</td>
+                                    <td>${instrument.students}</td>
+                                    <td>${instrument.publications}</td>
+                                    <td>${instrument.samples}</td>
+                                    <td><button type="button" value="${instrument.id}" class="btn btn-sm btn-success bookequipment">Free</button></td>
+                                </tr>
+                                `;
+                            });
+                            equipment[response.id] = t + '</tbody>';
+                        },
+                    });
+                });
+            },
+        });
+    }
+
+    getEquipment();
     getInstruments();
 
     const makeDescription = (element) => {
         return `
+                <div class="tablecontainer">
+                    <table id="equipmenttable_${element.id}" class="table table-bordered table-striped mb-0">
+                        ${equipment[element.id]}
+                    </table>
+                </div>
                 <form class="facilityform" id="createfacilityform">
                     <h2>Add a new piece of equipment</h2>
                     <div class="form-group">
@@ -264,6 +311,22 @@ navigator.geolocation.getCurrentPosition(position => {
                     for (let button of buttons) {
                         button.addEventListener('click', (event) => {
                             addInstrument();
+                        });
+                    };
+
+                    const usebuttons = document.getElementsByClassName("bookequipment");
+
+                    for (let button of usebuttons) {
+                        button.addEventListener('click', (event) => {
+                            if (button.classList.contains('btn-success')) {
+                                button.classList.add('btn-danger');
+                                button.classList.remove('btn-success');
+                                button.innerHTML = 'In use'
+                            } else {
+                                button.classList.add('btn-success');
+                                button.classList.remove('btn-danger');
+                                button.innerHTML = 'Free'
+                            } 
                         });
                     };
                 });

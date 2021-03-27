@@ -22,5 +22,18 @@ body {
 }
 
 .mapboxgl-popup-content {
-    min-width: 400px;
+    min-width: 600px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tablecontainer {
+    margin: 30px;
+    margin-bottom: 0;
+    max-height: 200px;
+    overflow-y: scroll;
+}
+
+.bookequipment {
+    width: 30px;
 }

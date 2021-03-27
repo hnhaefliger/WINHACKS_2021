@@ -22,18 +22,21 @@ body {
     overflow-y: scroll;
 }
 
-#createfacilityform {
-    padding: 30px;
-}
-
-.facilityform {
-    padding: 30px;
-}
-
 #titletext {
     margin: 30px 0 0 30px;
 }
 
 .mapboxgl-popup-content {
-    min-width: 400px;
+    min-width: 900px;
+    padding: 30px;
+}
+
+.tablecontainer {
+    max-height: 200px;
+    width: 100%;
+    overflow-y: scroll;
+}
+
+.bookequipment {
+    width: 60px;
 }
