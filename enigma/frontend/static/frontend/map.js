@@ -133,7 +133,7 @@ const formatEquipment = (facility) => {
 const makeDescription = (facility) => {
     return `
                 <div class="tablecontainer">
-                    <table id="equipmenttable_${facility.id}" class="table table-bordered table-striped mb-0">
+                    <table id="equipmenttable" class="table table-bordered table-striped mb-0">
                         ${formatEquipment(facility.id)}
                     </table>
                 </div>
@@ -195,14 +195,14 @@ navigator.geolocation.getCurrentPosition(position => {
     });
 
     const updateMap = () => {
-        const res1 = getFacilities();
-        const res2 = getInstruments();
-        const res3 = getEquipment();
+        getFacilities();
+        getInstruments();
+        getEquipment();
 
         map.getSource('places').setData({
             'type': 'FeatureCollection',
             'features': formatFeatures(),
-        })   
+        })
     }
 
     const addFacility = () => {
@@ -217,6 +217,7 @@ navigator.geolocation.getCurrentPosition(position => {
             $.ajax({
                 type: 'POST',
                 url: 'api/facilities/',
+                async: true,
                 headers: {'X-CSRFToken': csrftoken},
                 data: {
                     'name': name,
@@ -224,19 +225,19 @@ navigator.geolocation.getCurrentPosition(position => {
                 },
                 dataType: "json",
                 success: (res) => {
-                    document.getElementById('facilitynameinput').value = '';
-                    document.getElementById('facilityaddressinput').value = '';
-                    document.getElementById('facilitypostalcodeinput').value = '';
-                    document.getElementById('facilityregioninput').value = '';
-                    document.getElementById('facilitycountryinput').value = '';
-    
-                    getFacilities();
-                    getEquipment();
+                    updateMap();
                 },
                 error: (err) => {
                     alert('Something went wrong');
                 }
             });
+
+            document.getElementById('facilitynameinput').value = '';
+            document.getElementById('facilityaddressinput').value = '';
+            document.getElementById('facilitypostalcodeinput').value = ''
+            document.getElementById('facilityregioninput').value = '';
+            document.getElementById('facilitycountryinput').value = '';
+            
         } else {
             alert('Please fill in all fields');
         }
@@ -290,7 +291,7 @@ navigator.geolocation.getCurrentPosition(position => {
     
     if (newFacilityButton) {
         newFacilityButton.addEventListener('click', (event) => {
-            updateMap();
+            addFacility();
         });
     };
 
