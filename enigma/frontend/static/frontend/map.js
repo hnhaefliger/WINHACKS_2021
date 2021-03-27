@@ -24,8 +24,60 @@ const makeFeatures = (list) => {
     return feat;
 }
 
+const addInstrument = () => {
+    const facility = document.getElementById('facilityid').value;
+    console.log(facility);
+    const instrument = document.getElementById('insturmenttypeinput').value;
+    const trained = document.getElementById('instrumenttrainedinput').value;
+    const researchers = document.getElementById('instrumentresearchers')
+}
+
 const makeDescription = (element) => {
-    return `<p>${element.name}</p>`;
+    return `
+            <form class="facilityform" id="createfacilityform">
+                <h2>Add a new piece of equipment</h2>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Instrument</label>
+                  <input type="email" class="form-control" id="instrumenttypeinput" placeholder="Choose an instrument type">
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Trained</label>
+                            <input type="email" class="form-control" id="instrumenttrainedinput" placeholder="#">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Researchers</label>
+                            <input type="email" class="form-control" id="instrumentresearchersinput" placeholder="#">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Students</label>
+                            <input type="email" class="form-control" id="instrumentstudentsinput" placeholder="#">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Publications</label>
+                            <input type="email" class="form-control" id="instrumentpublicationsinput" placeholder="#">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Samples</label>
+                            <input type="email" class="form-control" id="instrumentsamplesinput" placeholder="#">
+                        </div>
+                    </div>
+                    <input type="hidden" id="facilityid" value="${element.id}" />
+                </div>
+                <button type="button" id="addinstrument" class="btn btn-primary addinstrument">Add</button>
+            </form>
+    `;
 }
 
 $.ajax({
@@ -70,7 +122,8 @@ navigator.geolocation.getCurrentPosition(position => {
                             'Arial Unicode MS Bold'
                         ],
                         'text-offset': [0, 1.25],
-                        'text-anchor': 'top'
+                        'text-anchor': 'top',
+                        'icon-allow-overlap': false,
                     }
                 });
 
@@ -89,6 +142,14 @@ navigator.geolocation.getCurrentPosition(position => {
                     .setLngLat(coordinates)
                     .setHTML(description)
                     .addTo(map);
+
+                    const buttons = document.getElementsByClassName("addinstrument");
+
+                    for (let button of buttons) {
+                        button.addEventListener('click', (event) => {
+                            addInstrument();
+                        });
+                    };
                 });
                      
                 // Change the cursor to a pointer when the mouse is over the places layer.

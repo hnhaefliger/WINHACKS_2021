@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content='width=device-width, initial-scale=1.0'>
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+        <Title>WINHACKS</Title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css' rel='stylesheet' />
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    </head>
+    <body>
+        <div id="controls">
+            <a href="/">
+                <h2 id="titletext">< Home</h2>
+            </a>
+            <form id="createfacilityform">
+                <h2>Create a new facility</h2>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Name</label>
+                  <input type="email" class="form-control" id="facilitynameinput" placeholder="Enter name">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Location</label>
+                    <input type="email" class="form-control" id="facilitylocationinput" placeholder="Enter location">
+                    <!--Break this up in the future-->
+                </div>
+                <button type="button" id="createfacility" class="btn btn-primary">Create</button>
+            </form>
+        </div>
+        <div id="map" />
+
+        {% load static %}
+        <script src="{% static "frontend/map.js" %}"></script>
+        <link href="{% static "frontend/admin_panel.css" %}" rel='stylesheet' />
+    </body>
+</html>

@@ -1,0 +1,39 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+
+#map {
+    width: 70vw;
+    height: 100vh;
+    position: absolute;
+    right: 0;
+}
+
+#controls {
+    width: 30vw;
+    height: 100vh;
+    position: absolute;
+    left: 0;
+    box-shadow: 20px;
+    overflow-y: scroll;
+}
+
+#createfacilityform {
+    padding: 30px;
+}
+
+.facilityform {
+    padding: 30px;
+}
+
+#titletext {
+    margin: 30px 0 0 30px;
+}
+
+.mapboxgl-popup-content {
+    min-width: 400px;
+}
