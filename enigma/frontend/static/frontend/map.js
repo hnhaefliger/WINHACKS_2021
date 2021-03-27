@@ -122,13 +122,31 @@ navigator.geolocation.getCurrentPosition(position => {
         }
     }
 
+    var instruments = '';
+
+    const getInstruments = () => {
+        $.ajax({
+            type: 'GET',
+            url: 'api/instruments/',
+            success: (res) => {
+                res.forEach((instrument) => {
+                    instruments += `<option value="${instrument.name}">${instrument.name}</option>`
+                })  
+            },
+        });
+    }
+
+    getInstruments();
+
     const makeDescription = (element) => {
         return `
                 <form class="facilityform" id="createfacilityform">
                     <h2>Add a new piece of equipment</h2>
                     <div class="form-group">
-                    <label for="exampleInputEmail1">Instrument</label>
-                    <input type="email" class="form-control" id="instrumenttypeinput" placeholder="Choose an instrument type">
+                        <label for="exampleInputEmail1">Instrument</label>
+                        <select class="form-control" id="instrumenttypeinput" placeholder="Choose an instrument type">
+                            ${instruments}
+                        </select> 
                     </div>
                     <div class="row">
                         <div class="col">
