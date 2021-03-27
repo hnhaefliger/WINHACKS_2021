@@ -1,0 +1,30 @@
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+}
+
+#map {
+    width: 70%;
+    height: 100%;
+    position: absolute;
+    right: 0;
+}
+
+#controls {
+    width: 30%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    box-shadow: 20px;
+}
+
+#createfacilityform {
+    padding: 30px;
+}
+
+#titletext {
+    margin: 30px 0 0 30px;
+}

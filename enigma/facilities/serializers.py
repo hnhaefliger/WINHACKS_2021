@@ -40,7 +40,7 @@ class FacilitySerializer(serializers.Serializer):
         location = data['location'].replace(' ', '+')
         response = requests.get(f'http://www.mapquestapi.com/geocoding/v1/address?key={key}&location={location}', verify=False)
         location = response.json()['results'][0]['locations'][0]
-        location = location['street'] + ',' + location['adminArea6'] + ',' + location['adminArea5'] + ',' + location['adminArea4'] + ',' + location['adminArea3'] + ',' + location['adminArea1'] + ',' + location['postalCode']
+        location = location['street'] + ',' + location['adminArea6'] + ',' + location['adminArea5'] + ',' + location['adminArea4'] + ',' + location['adminArea3'] + ',' + location['adminArea1'] + ',' + location['postalCode'] + ',' + str(location['latLng']['lat']) + ',' + str(location['latLng']['lng'])
         data['location'] = location
 
         try:

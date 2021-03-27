@@ -4,12 +4,85 @@
         <meta charset="UTF-8">
         <meta name="viewport" content='width=device-width, initial-scale=1.0'>
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
         <Title>WINHACKS</Title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'></script>
+        <link href='https://api.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css' rel='stylesheet' />
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     </head>
     <body>
-        <h1>Some other stuff will go here later</h1>
+        <div id="controls">
+            <a href="/">
+                <h2 id="titletext">< Home</h2>
+            </a>
+            <form id="createfacilityform">
+                <h2>Create a new facility</h2>
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Name</label>
+                  <input type="email" class="form-control" id="facilitynameinput" placeholder="Enter name">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Location</label>
+                    <input type="email" class="form-control" id="facilitylocationinput" placeholder="Enter location">
+                    <!--Break this up in the future-->
+                </div>
+                <button type="button" id="createfacility" class="btn btn-primary">Create</button>
+            </form>
+            <form id="createfacilityform">
+                <h2>Add a new piece of equipment</h2>
+                <!--Both of these will be dropdowns-->
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Instrument</label>
+                  <input type="email" class="form-control" id="instrumenttypeinput" placeholder="Choose an instrument type">
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Facility</label>
+                    <input type="email" class="form-control" id="instrumentfacilityinput" placeholder="Choose the instrument location">
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Trained</label>
+                            <input type="email" class="form-control" id="instrumenttrainedinput" placeholder="#">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Researchers</label>
+                            <input type="email" class="form-control" id="instrumentresearchersinput" placeholder="#">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Students</label>
+                            <input type="email" class="form-control" id="instrumentstudentsinput" placeholder="#">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Publications</label>
+                            <input type="email" class="form-control" id="instrumentpublicationsinput" placeholder="#">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Samples</label>
+                            <input type="email" class="form-control" id="instrumentsamplesinput" placeholder="#">
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="addinstrument" class="btn btn-primary">Add</button>
+            </form>
+        </div>
+        <div id="map" />
 
         {% load static %}
-        <script src="{% static "frontend/main.js" %}"></script>
+        <script src="{% static "frontend/map.js" %}"></script>
+        <link href="{% static "frontend/index.css" %}" rel='stylesheet' />
     </body>
 </html>
