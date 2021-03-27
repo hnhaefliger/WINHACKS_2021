@@ -12,3 +12,15 @@ body {
     position: absolute;
     right: 0;
 }
+
+.facilityform {
+    padding: 30px;
+}
+
+#titletext {
+    margin: 30px 0 0 30px;
+}
+
+.mapboxgl-popup-content {
+    min-width: 400px;
+}
