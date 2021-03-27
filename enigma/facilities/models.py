@@ -18,7 +18,7 @@ class Facility(models.Model):
     public_id = models.CharField(max_length=32, default=createUUID, editable=False, unique=True)
 
     name = models.CharField(max_length=256, unique=True)
-    location = models.CharField(max_length=256, unique=True)
+    location = models.CharField(max_length=1024, unique=True)
 
     def __str__(self):
         return self.name
