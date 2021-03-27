@@ -13,6 +13,34 @@ class EquipmentViewSet(viewsets.ViewSet):
     '''
     lookup_url_kwarg = 'lookup_value'
 
+    def patch(self, request, *args, **kwargs):
+        try:
+            print(kwargs['lookup_value'])
+            equipment = Equipment.objects.get(public_id=kwargs['lookup_value'])
+
+            serializer = EquipmentSerializer(equipment, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            equipment = serializer.save()
+
+            return Response(data={
+                'id': equipment.public_id,
+                'instrument': equipment.instrument.name,
+                'trained': equipment.trained,
+                'researchers': equipment.researchers,
+                'publications': equipment.publications,
+                'students': equipment.students,
+                'samples': equipment.samples,
+                'facility': {
+                    'id': equipment.facility.public_id,
+                    'name': equipment.facility.name,
+                    'location': equipment.facility.location,
+                },
+                'in_use': equipment.in_use,
+            }, status=status.HTTP_200_OK)
+
+        except:
+            raise NotFound('This piece of equipment does not exist.')
+
     def retrieve(self, request, *args, **kwargs):
         '''
         Get information about a specific piece of equipment.
@@ -32,6 +60,7 @@ class EquipmentViewSet(viewsets.ViewSet):
                     'name': equipment.facility.name,
                     'location': equipment.facility.location,
                 },
+                'in_use': equipment.in_use,
             }, status=status.HTTP_200_OK)
 
         except:
@@ -57,6 +86,7 @@ class EquipmentViewSet(viewsets.ViewSet):
                     'name': equipment.facility.name,
                     'location': equipment.facility.location,
             },
+            'in_use': equipment.in_use,
         }, status=status.HTTP_200_OK)
     
     def get(self, request, *args, **kwargs):
@@ -91,6 +121,7 @@ class EquipmentViewSet(viewsets.ViewSet):
                     'name': equipment.facility.name,
                     'location': equipment.facility.location,
                 },
+                'in_use': equipment.in_use,
             })
 
         return Response(data=data, status=status.HTTP_200_OK)

@@ -30,5 +30,7 @@ class Equipment(models.Model):
 
     facility = models.ForeignKey('facilities.Facility', on_delete=models.SET_NULL, null=True, to_field='public_id')
 
+    in_use = models.BooleanField(default=False)
+
     def __str__(self):
         return self.public_id + ' - ' + self.instrument.name

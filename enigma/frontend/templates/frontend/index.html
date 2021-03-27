@@ -13,10 +13,12 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     </head>
     <body>
-        <h1>Welcome to Enigma</h1>
-        <a href="map" class="btn btn-primary">I'm a researcher</a>
-        <a href="admin_panel" class="btn btn-primary">I'm an admin</a>
-
+        <div id="mainbox">
+            <h1>Welcome to Enigma</h1>
+            <a href="map" class="btn btn-primary">I'm a researcher</a>
+            <a href="admin_panel" class="btn btn-primary">I'm an admin</a>
+        </div>
+        
         {% load static %}
         <link href="{% static "frontend/index.css" %}" rel='stylesheet' />
     </body>

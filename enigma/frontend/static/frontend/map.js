@@ -66,7 +66,9 @@ navigator.geolocation.getCurrentPosition(position => {
                     document.getElementById('facilitypostalcodeinput').value = '';
                     document.getElementById('facilityregioninput').value = '';
                     document.getElementById('facilitycountryinput').value = '';
+
                     fetchFacilities();
+                    getEquipment();
                 },
                 error: (err) => {
                     console.log(err);
@@ -118,6 +120,8 @@ navigator.geolocation.getCurrentPosition(position => {
                     document.getElementById('instrumentstudentsinput').value = '';
                     document.getElementById('instrumentpublicationsinput').value = '';
                     document.getElementById('instrumentsamplesinput').value = '';
+
+                    getEquipment();
                 },
                 error: (err) => {
                     console.log(err);
@@ -172,7 +176,7 @@ navigator.geolocation.getCurrentPosition(position => {
                                     <td>${instrument.students}</td>
                                     <td>${instrument.publications}</td>
                                     <td>${instrument.samples}</td>
-                                    <td><button type="button" value="${instrument.id}" class="btn btn-sm btn-success bookequipment">Free</button></td>
+                                    <td><button type="button" value="${instrument.id}" class="btn btn-sm ${instrument.in_use ? 'btn-danger' : 'btn-success'} bookequipment">${instrument.in_use ? 'In use' : 'Free'}</button></td>
                                 </tr>
                                 `;
                             });
@@ -329,11 +333,39 @@ navigator.geolocation.getCurrentPosition(position => {
                                 button.classList.add('btn-danger');
                                 button.classList.remove('btn-success');
                                 button.innerHTML = 'In use'
+                                $.ajax({
+                                    type: 'PATCH',
+                                    url: 'api/equipment/' + button.value + '/',
+                                    headers: {'X-CSRFToken': csrftoken},
+                                    data: {
+                                        'in_use': true,
+                                    },
+                                    dataType: "json",
+                                    success: (res) => {
+                                    },
+                                    error: (err) => {
+                                        alert('Something went wrong');
+                                    }
+                                });
                             } else {
                                 button.classList.add('btn-success');
                                 button.classList.remove('btn-danger');
                                 button.innerHTML = 'Free'
-                            } 
+                                $.ajax({
+                                    type: 'PATCH',
+                                    url: 'api/equipment/' + button.value + '/',
+                                    headers: {'X-CSRFToken': csrftoken},
+                                    data: {
+                                        'in_use': false,
+                                    },
+                                    dataType: "json",
+                                    success: (res) => {
+                                    },
+                                    error: (err) => {
+                                        alert('Something went wrong');
+                                    }
+                                });
+                            }
                         });
                     };
                 });

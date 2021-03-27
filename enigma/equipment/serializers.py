@@ -18,6 +18,8 @@ class EquipmentSerializer(serializers.Serializer):
 
     facility = serializers.CharField()
 
+    in_use = serializers.BooleanField()
+
     def create(self, validated_data):
         '''
         Create a new piece of equipment.
@@ -42,6 +44,7 @@ class EquipmentSerializer(serializers.Serializer):
         instance.students = validated_data.get('students', instance.students)
         instance.samples = validated_data.get('sample', instance.samples)
         instance.facility = validated_data.get('facility', instance.facility)
+        instance.in_use = validated_data.get('in_use', instance.in_use)
         instance.save()
         return instance
 
@@ -49,27 +52,30 @@ class EquipmentSerializer(serializers.Serializer):
         '''
         Validation for equipment.
         '''
-        try:
-            instrument = Instrument.objects.get(public_id=data['instrument'])
-
-        except:
+        if 'instrument' in data:
             try:
-                instrument = Instrument.objects.get(name=data['instrument'])
+                instrument = Instrument.objects.get(public_id=data['instrument'])
 
             except:
-                raise NotFound({'instrument': 'This instrument does not exist'})
+                try:
+                    instrument = Instrument.objects.get(name=data['instrument'])
 
-        try:
-            facility = Facility.objects.get(public_id=data['facility'])
+                except:
+                    raise NotFound({'instrument': 'This instrument does not exist'})
 
-        except:
+            data['instrument'] = instrument
+
+        if 'facility' in data:
             try:
-                facility = Facility.objects.get(name=data['facility'])
+                facility = Facility.objects.get(public_id=data['facility'])
 
             except:
-                raise NotFound({'facility': 'This facility does not exist'})
+                try:
+                    facility = Facility.objects.get(name=data['facility'])
 
-        data['instrument'] = instrument
-        data['facility'] = facility
+                except:
+                    raise NotFound({'facility': 'This facility does not exist'})
+
+            data['facility'] = facility
             
         return data

@@ -7,7 +7,7 @@ from django.urls import reverse
 from .models import Equipment
 
 class EquipmentAdmin(admin.ModelAdmin):
-    fields = ('instrument', 'trained', 'researchers', 'publications', 'students', 'samples', 'facility')
+    fields = ('instrument', 'trained', 'researchers', 'publications', 'students', 'samples', 'facility', 'in_use')
     readonly_fields = ('id', 'public_id')
 
     def id(self, obj): return obj.id
