@@ -45,6 +45,15 @@ body {
     overflow-y: scroll;
 }
 
+p {
+    padding: 0;
+    margin: 0;
+}
+
 .bookequipment {
     width: 60px;
+}
+
+.hiddenedit {
+    display: none;
 }

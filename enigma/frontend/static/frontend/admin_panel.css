@@ -39,6 +39,11 @@ body {
     padding: 30px;
 }
 
+p {
+    padding: 0;
+    margin: 0;
+}
+
 .tablecontainer {
     max-height: 200px;
     width: 100%;
@@ -47,4 +52,8 @@ body {
 
 .bookequipment {
     width: 60px;
+}
+
+.hiddenedit {
+    display: none;
 }

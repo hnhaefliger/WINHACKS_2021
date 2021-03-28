@@ -3,6 +3,7 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoiam9lYWxmIiwiYSI6ImNrbXIyNHF3YTAzcHoydnBuc2x1Y
 var equipment = {};
 var instruments = []
 var facilities = [];
+var updateMapFunc = null;
 
 const setEquipment = (id, value) => {
     equipment[id] = value;
@@ -102,6 +103,72 @@ const formatInstruments = () => {
     return formatted;
 }
 
+const startEdit = (id) => {
+    document.getElementById('trainedtext_' + id).classList.toggle('hiddenedit');
+    document.getElementById('trainededit_' + id).classList.toggle('hiddenedit');
+    document.getElementById('researcherstext_' + id).classList.toggle('hiddenedit');
+    document.getElementById('researchersedit_' + id).classList.toggle('hiddenedit');
+    document.getElementById('studentstext_' + id).classList.toggle('hiddenedit');
+    document.getElementById('studentsedit_' + id).classList.toggle('hiddenedit');
+    document.getElementById('publicationstext_' + id).classList.toggle('hiddenedit');
+    document.getElementById('publicationsedit_' + id).classList.toggle('hiddenedit');
+    document.getElementById('samplestext_' + id).classList.toggle('hiddenedit');
+    document.getElementById('samplesedit_' + id).classList.toggle('hiddenedit');
+    document.getElementById('markused_' + id).classList.toggle('hiddenedit');
+    document.getElementById('savechanges_' + id).classList.toggle('hiddenedit');
+}
+
+const stopEdit = (id) => {
+    const trainedtext = document.getElementById('trainedtext_' + id);
+    const trainededit = document.getElementById('trainededit_' + id);
+    const researcherstext = document.getElementById('researcherstext_' + id);
+    const researchersedit = document.getElementById('researchersedit_' + id);
+    const studentstext = document.getElementById('studentstext_' + id);
+    const studentsedit = document.getElementById('studentsedit_' + id);
+    const publicationstext = document.getElementById('publicationstext_' + id);
+    const publicationsedit = document.getElementById('publicationsedit_' + id);
+    const samplestext = document.getElementById('samplestext_' + id);
+    const samplesedit = document.getElementById('samplesedit_' + id);
+    trainedtext.innerHTML = trainededit.value;
+    researcherstext.innerHTML = researchersedit.value;
+    studentstext.innerHTML = studentsedit.value;
+    publicationstext.innerHTML = publicationsedit.value;
+    samplestext.innerHTML = samplesedit.value;
+
+    $.ajax({
+        type: 'PATCH',
+        url: 'api/equipment/' + id + '/',
+        headers: {'X-CSRFToken': csrftoken},
+        data: {
+            'trained': trainededit.value,
+            'researchers': researchersedit.value,
+            'students': studentsedit.value,
+            'publications': publicationsedit.value,
+            'samples': samplesedit.value,
+        },
+        dataType: "json",
+        success: (res) => {
+            updateMapFunc();
+        },
+        error: (err) => {
+            alert('Something went wrong');
+        }
+    });
+
+    trainedtext.classList.toggle('hiddenedit');
+    trainededit.classList.toggle('hiddenedit');
+    researcherstext.classList.toggle('hiddenedit');
+    researchersedit.classList.toggle('hiddenedit');
+    studentstext.classList.toggle('hiddenedit');
+    studentsedit.classList.toggle('hiddenedit');
+    publicationstext.classList.toggle('hiddenedit');
+    publicationsedit.classList.toggle('hiddenedit');
+    samplestext.classList.toggle('hiddenedit');
+    samplesedit.classList.toggle('hiddenedit');
+    document.getElementById('markused_' + id).classList.toggle('hiddenedit');
+    document.getElementById('savechanges_' + id).classList.toggle('hiddenedit');
+}
+
 const formatEquipment = (facility) => {
     formatted = `
                 <thead><tr>
@@ -117,13 +184,31 @@ const formatEquipment = (facility) => {
     equipment[facility].forEach(equip => {
         formatted += `
             <tr>
-                <td>${equip.instrument}</td>
-                <td>${equip.trained}</td>
-                <td>${equip.researchers}</td>
-                <td>${equip.students}</td>
-                <td>${equip.publications}</td>
-                <td>${equip.samples}</td>
-                <td><button type="button" value="${equip.id}" class="btn btn-sm ${equip.in_use ? 'btn-danger' : 'btn-success'} bookequipment">${equip.in_use ? 'In use' : 'Free'}</button></td>
+                <td><p>${equip.instrument}</p></td>
+                <td>
+                    <p onclick="startEdit('${equip.id}')" id="trainedtext_${equip.id}">${equip.trained}</p>
+                    <input type="text" class="form-control hiddenedit" value="${equip.trained}" id="trainededit_${equip.id}" placeholder="#">
+                </td>
+                <td>
+                    <p onclick="startEdit('${equip.id}')" id="researcherstext_${equip.id}">${equip.researchers}</p>
+                    <input type="text" class="form-control hiddenedit" value="${equip.researchers}" id="researchersedit_${equip.id}" placeholder="#">
+                </td>
+                <td>
+                    <p onclick="startEdit('${equip.id}')" id="studentstext_${equip.id}">${equip.students}</p>
+                    <input type="text" class="form-control hiddenedit" value="${equip.students}" id="studentsedit_${equip.id}" placeholder="#">
+                </td>
+                <td>
+                    <p onclick="startEdit('${equip.id}')" id="publicationstext_${equip.id}">${equip.publications}</p>
+                    <input type="text" class="form-control hiddenedit" value="${equip.publications}" id="publicationsedit_${equip.id}" placeholder="#">
+                </td>
+                <td>
+                    <p onclick="startEdit('${equip.id}')" id="samplestext_${equip.id}">${equip.samples}</p>
+                    <input type="text" class="form-control hiddenedit" value="${equip.samples}" id="samplesedit_${equip.id}" placeholder="#">
+                </td>
+                <td>
+                    <button type="button" value="${equip.id}" class="btn btn-sm ${equip.in_use ? 'btn-danger' : 'btn-success'} bookequipment" id="markused_${equip.id}">${equip.in_use ? 'In use' : 'Free'}</button>
+                    <button type="button" value="${equip.id}" class="btn btn-sm btn-primary hiddenedit" onclick="stopEdit('${equip.id}')" id="savechanges_${equip.id}">Save</button>    
+                </td>
             </tr>
         `;
     });
@@ -149,19 +234,19 @@ const makeDescription = (facility) => {
                         <div class="col">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Trained</label>
-                                <input type="email" class="form-control" id="instrumenttrainedinput" placeholder="#">
+                                <input type="text" class="form-control" id="instrumenttrainedinput" placeholder="#">
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Researchers</label>
-                                <input type="email" class="form-control" id="instrumentresearchersinput" placeholder="#">
+                                <input type="text" class="form-control" id="instrumentresearchersinput" placeholder="#">
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Students</label>
-                                <input type="email" class="form-control" id="instrumentstudentsinput" placeholder="#">
+                                <input type="text" class="form-control" id="instrumentstudentsinput" placeholder="#">
                             </div>
                         </div>
                     </div>
@@ -169,13 +254,13 @@ const makeDescription = (facility) => {
                         <div class="col">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Publications</label>
-                                <input type="email" class="form-control" id="instrumentpublicationsinput" placeholder="#">
+                                <input type="text" class="form-control" id="instrumentpublicationsinput" placeholder="#">
                             </div>
                         </div>
                         <div class="col">
                             <div class="form-group">
                                 <label for="exampleInputEmail1">Samples</label>
-                                <input type="email" class="form-control" id="instrumentsamplesinput" placeholder="#">
+                                <input type="text" class="form-control" id="instrumentsamplesinput" placeholder="#">
                             </div>
                         </div>
                         <input type="hidden" id="facilityid" value="${facility.id}" />
@@ -204,6 +289,8 @@ navigator.geolocation.getCurrentPosition(position => {
             'features': formatFeatures(),
         })
     }
+
+    updateMapFunc = updateMap;
 
     const addFacility = () => {
         const name = document.getElementById('facilitynameinput').value;
