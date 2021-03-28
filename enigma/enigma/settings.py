@@ -146,3 +146,9 @@ REST_FRAMEWORK = {
     #   'rest_framework.renderers.BrowsableAPIRenderer',
     )
 }
+
+
+# MIME-Types
+
+import mimetypes
+mimetypes.add_type("text/css", ".css", True)
