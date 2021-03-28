@@ -9,6 +9,7 @@ djangorestframework = "*"
 uuid = "*"
 requests = "*"
 gunicorn = "*"
+django-on-heroku = "*"
 
 [dev-packages]
 
