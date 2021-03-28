@@ -329,7 +329,7 @@ const addFacility = () => {
             },
             dataType: "json",
             success: (res) => {
-                updateMap();
+                updateMapFunc();
             },
             error: (err) => {
                 alert('Something went wrong');
@@ -526,7 +526,7 @@ navigator.geolocation.getCurrentPosition(position => {
                                     },
                                     dataType: "json",
                                     success: (res) => {
-                                        updateMap();
+                                        updateMapFunc();
                                     },
                                     error: (err) => {
                                         alert('Something went wrong');
@@ -545,7 +545,7 @@ navigator.geolocation.getCurrentPosition(position => {
                                     },
                                     dataType: "json",
                                     success: (res) => {
-                                        updateMap();
+                                        updateMapFunc();
                                     },
                                     error: (err) => {
                                         alert('Something went wrong');
@@ -566,7 +566,7 @@ navigator.geolocation.getCurrentPosition(position => {
                     map.getCanvas().style.cursor = '';
                 });
 
-                updateMap();
+                updateMapFunc();
             }
         );
     });
