@@ -9,8 +9,8 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-#import django_heroku
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +25,10 @@ SECRET_KEY = '_pa0%7@hgrlat*zvm+$+7d9svq)--jui#7_br_2%*njq@tpehb' # this is bad 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['dataturawinhacks.herokuapp.com']
+ALLOWED_HOSTS = [
+    'localhost',
+    'dataturawinhacks.herokuapp.com'
+]
 
 # Application definition
 
@@ -130,7 +133,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # Rest framework
@@ -143,8 +146,3 @@ REST_FRAMEWORK = {
     #   'rest_framework.renderers.BrowsableAPIRenderer',
     )
 }
-
-
-# Heroku
-
-#django_heroku.settings(locals())
