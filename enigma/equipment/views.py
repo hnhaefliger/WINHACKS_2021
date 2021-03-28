@@ -6,6 +6,7 @@ from rest_framework.exceptions import NotFound
 from .serializers import EquipmentSerializer
 from .models import Equipment
 from facilities.models import Facility
+from instruments.models import Instrument
 
 class EquipmentViewSet(viewsets.ViewSet):
     '''
@@ -98,7 +99,12 @@ class EquipmentViewSet(viewsets.ViewSet):
         filtered = Equipment.objects.all()
 
         if 'instrument' in request.GET:
-            filtered = filtered.filter(instrument=request.GET['instrument'].lower())
+            try:
+                instrument = Instrument.objects.get(public_id=request.GET['instrument'])
+                filtered = filtered.filter(instrument=instrument)
+
+            except:
+                pass
 
         if 'facility' in request.GET:
             try:

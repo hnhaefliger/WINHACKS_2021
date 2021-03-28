@@ -7,7 +7,7 @@ body {
 }
 
 #map {
-    width: 100vw;
+    width: 70vw;
     height: 100vh;
     position: absolute;
     right: 0;
@@ -39,15 +39,15 @@ body {
     padding: 30px;
 }
 
+p {
+    padding: 0;
+    margin: 0;
+}
+
 .tablecontainer {
     max-height: 200px;
     width: 100%;
     overflow-y: scroll;
-}
-
-p {
-    padding: 0;
-    margin: 0;
 }
 
 .bookequipment {
@@ -56,4 +56,8 @@ p {
 
 .hiddenedit {
     display: none;
+}
+
+#selection {
+    margin: 30px;
 }

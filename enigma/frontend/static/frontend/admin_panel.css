@@ -57,3 +57,7 @@ p {
 .hiddenedit {
     display: none;
 }
+
+#selection {
+    margin: 30px;
+}

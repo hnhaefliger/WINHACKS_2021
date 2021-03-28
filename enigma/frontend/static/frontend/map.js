@@ -4,6 +4,7 @@ var equipment = {};
 var instruments = []
 var facilities = [];
 var updateMapFunc = null;
+var filter = ''
 
 const setEquipment = (id, value) => {
     equipment[id] = value;
@@ -26,7 +27,7 @@ const getEquipment = () => {
                 $.ajax({
                     type: 'GET',
                     async: false,
-                    url: 'api/equipment/?facility=' + facility.id,
+                    url: filter ? 'api/equipment/?facility=' + facility.id + '&instrument=' + filter : 'api/equipment/?facility=' + facility.id,
                     success: (equip) => {
                         setEquipment(facility.id, equip)
                     },
@@ -45,6 +46,40 @@ const getInstruments = () => {
             setInstruments(response)
         },
     })
+}
+
+const formatSelection = () => {
+    formatted = `
+        <form>
+            <h2>Show me</h2>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="selection" id="selection_none" value="" checked onclick="selectFilter('')">
+                <label class="form-check-label" for="selection_none">
+                Everything
+                </label>
+            </div>
+    `;
+    instruments.forEach((instrument) => {
+        formatted += `
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="selection" id="selection_${instrument.id}" value="${instrument.id}" onclick="selectFilter('${instrument.id}')">
+                <label class="form-check-label" for="selection_${instrument.id}">
+                ${instrument.name}
+                </label>
+            </div>
+        `;
+    });
+    formatted += '</form>';
+    return formatted;
+}
+
+getInstruments();
+const selection = document.getElementById('selection');
+selection.innerHTML = formatSelection();
+
+const selectFilter = (filt) => {
+    filter = filt;
+    updateMapFunc();
 }
 
 const getFacilities = () => {
@@ -75,21 +110,25 @@ function getCookie(name) {
 const csrftoken = getCookie('csrftoken');
 
 const formatFeatures = () => {
+    console.log('a');
     features = [];
     facilities.forEach(facility => {
-        const location = facility.location.split(',');
+        if (!filter || (filter && equipment[facility.id].length)) {
+            console.log(facility);
+            const location = facility.location.split(',');
 
-        features.push({
-            'type': 'Feature',
-            'geometry': {
-                'type': 'Point',
-                'coordinates': [parseFloat(location[8]), parseFloat(location[7])]
-            },
-            'properties': {
-                'title': facility.name,
-                'description': makeDescription(facility),
-            }
-        });
+            features.push({
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': [parseFloat(location[8]), parseFloat(location[7])]
+                },
+                'properties': {
+                    'title': facility.name,
+                    'description': makeDescription(facility),
+                }
+            });
+        }
     });
 
     return features;
