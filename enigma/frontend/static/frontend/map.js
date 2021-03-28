@@ -270,6 +270,126 @@ const makeDescription = (facility) => {
     `;
 }
 
+const addFacility = () => {
+    const name = document.getElementById('facilitynameinput').value;
+    const address = document.getElementById('facilityaddressinput').value;
+    const postalcode = document.getElementById('facilitypostalcodeinput').value;
+    const region = document.getElementById('facilityregioninput').value;
+    const country = document.getElementById('facilitycountryinput').value;
+
+    if (name && address && postalcode && region && country) {
+        const location = address + ',' + postalcode + ',' + region + ',' + country;
+        $.ajax({
+            type: 'POST',
+            url: 'api/facilities/',
+            async: true,
+            headers: {'X-CSRFToken': csrftoken},
+            data: {
+                'name': name,
+                'location': location,
+            },
+            dataType: "json",
+            success: (res) => {
+                updateMap();
+            },
+            error: (err) => {
+                alert('Something went wrong');
+            }
+        });
+
+        document.getElementById('facilitynameinput').value = '';
+        document.getElementById('facilityaddressinput').value = '';
+        document.getElementById('facilitypostalcodeinput').value = ''
+        document.getElementById('facilityregioninput').value = '';
+        document.getElementById('facilitycountryinput').value = '';
+        
+    } else {
+        alert('Please fill in all fields');
+    }
+}
+
+const addInstrument = () => {
+    const facility = document.getElementById('facilityid').value;
+    const instrument = document.getElementById('instrumenttypeinput').value;
+    const trained = document.getElementById('instrumenttrainedinput').value;
+    const researchers = document.getElementById('instrumentresearchersinput').value;
+    const students = document.getElementById('instrumentstudentsinput').value;
+    const publications = document.getElementById('instrumentpublicationsinput').value;
+    const samples = document.getElementById('instrumentsamplesinput').value;
+
+    if (facility && instrument && trained && researchers && students && publications && samples) {
+        $.ajax({
+            type: 'POST',
+            url: 'api/equipment/',
+            headers: {'X-CSRFToken': csrftoken},
+            data: {
+                'facility': facility,
+                'instrument': instrument,
+                'trained': trained,
+                'researchers': researchers,
+                'students': students,
+                'publications': publications,
+                'samples': samples,
+            },
+            dataType: "json",
+            success: (response) => {
+                document.getElementById('facilityid').value = '';
+                document.getElementById('instrumenttypeinput').value = '';
+                document.getElementById('instrumenttrainedinput').value = '';
+                document.getElementById('instrumentresearchersinput').value = '';
+                document.getElementById('instrumentstudentsinput').value = '';
+                document.getElementById('instrumentpublicationsinput').value = '';
+                document.getElementById('instrumentsamplesinput').value = '';
+
+                document.getElementById('equipmenttable').innerHTML += `
+                    <tr>
+                        <td><p>${response.instrument}</p></td>
+                        <td>
+                            <p onclick="startEdit('${response.id}')" id="trainedtext_${response.id}">${response.trained}</p>
+                            <input type="text" class="form-control hiddenedit" value="${response.trained}" id="trainededit_${response.id}" placeholder="#">
+                        </td>
+                        <td>
+                            <p onclick="startEdit('${response.id}')" id="researcherstext_${response.id}">${response.researchers}</p>
+                            <input type="text" class="form-control hiddenedit" value="${response.researchers}" id="researchersedit_${response.id}" placeholder="#">
+                        </td>
+                        <td>
+                            <p onclick="startEdit('${response.id}')" id="studentstext_${response.id}">${response.students}</p>
+                            <input type="text" class="form-control hiddenedit" value="${response.students}" id="studentsedit_${response.id}" placeholder="#">
+                        </td>
+                        <td>
+                            <p onclick="startEdit('${response.id}')" id="publicationstext_${response.id}">${response.publications}</p>
+                            <input type="text" class="form-control hiddenedit" value="${response.publications}" id="publicationsedit_${response.id}" placeholder="#">
+                        </td>
+                        <td>
+                            <p onclick="startEdit('${response.id}')" id="samplestext_${response.id}">${response.samples}</p>
+                            <input type="text" class="form-control hiddenedit" value="${response.samples}" id="samplesedit_${response.id}" placeholder="#">
+                        </td>
+                        <td>
+                            <button type="button" value="${response.id}" class="btn btn-sm ${response.in_use ? 'btn-danger' : 'btn-success'} bookequipment" id="markused_${response.id}">${response.in_use ? 'In use' : 'Free'}</button>
+                            <button type="button" value="${response.id}" class="btn btn-sm btn-primary hiddenedit" onclick="stopEdit('${response.id}')" id="savechanges_${response.id}">Save</button>    
+                        </td>
+                    </tr>
+                `;
+
+                updateMapFunc();
+            },
+            error: (err) => {
+                alert('Something went wrong');
+            }
+        });
+    } else {
+        alert('Please fill in all fields');
+    }
+}
+
+const newFacilityButton = document.getElementById('createfacility')
+
+if (newFacilityButton) {
+    newFacilityButton.addEventListener('click', (event) => {
+        addFacility();
+    });
+};
+
 navigator.geolocation.getCurrentPosition(position => { 
     var map = new mapboxgl.Map({
         container: 'map',
@@ -291,96 +411,6 @@ navigator.geolocation.getCurrentPosition(position => {
     }
 
     updateMapFunc = updateMap;
-
-    const addFacility = () => {
-        const name = document.getElementById('facilitynameinput').value;
-        const address = document.getElementById('facilityaddressinput').value;
-        const postalcode = document.getElementById('facilitypostalcodeinput').value;
-        const region = document.getElementById('facilityregioninput').value;
-        const country = document.getElementById('facilitycountryinput').value;
-    
-        if (name && address && postalcode && region && country) {
-            const location = address + ',' + postalcode + ',' + region + ',' + country
-            $.ajax({
-                type: 'POST',
-                url: 'api/facilities/',
-                async: true,
-                headers: {'X-CSRFToken': csrftoken},
-                data: {
-                    'name': name,
-                    'location': location,
-                },
-                dataType: "json",
-                success: (res) => {
-                    updateMap();
-                },
-                error: (err) => {
-                    alert('Something went wrong');
-                }
-            });
-
-            document.getElementById('facilitynameinput').value = '';
-            document.getElementById('facilityaddressinput').value = '';
-            document.getElementById('facilitypostalcodeinput').value = ''
-            document.getElementById('facilityregioninput').value = '';
-            document.getElementById('facilitycountryinput').value = '';
-            
-        } else {
-            alert('Please fill in all fields');
-        }
-    }
-    
-    const addInstrument = () => {
-        const facility = document.getElementById('facilityid').value;
-        const instrument = document.getElementById('instrumenttypeinput').value;
-        const trained = document.getElementById('instrumenttrainedinput').value;
-        const researchers = document.getElementById('instrumentresearchersinput').value;
-        const students = document.getElementById('instrumentstudentsinput').value;
-        const publications = document.getElementById('instrumentpublicationsinput').value;
-        const samples = document.getElementById('instrumentsamplesinput').value;
-    
-        if (facility && instrument && trained && researchers && students && publications && samples) {
-            $.ajax({
-                type: 'POST',
-                url: 'api/equipment/',
-                headers: {'X-CSRFToken': csrftoken},
-                data: {
-                    'facility': facility,
-                    'instrument': instrument,
-                    'trained': trained,
-                    'researchers': researchers,
-                    'students': students,
-                    'publications': publications,
-                    'samples': samples,
-                },
-                dataType: "json",
-                success: (res) => {
-                    document.getElementById('facilityid').value = '';
-                    document.getElementById('instrumenttypeinput').value = '';
-                    document.getElementById('instrumenttrainedinput').value = '';
-                    document.getElementById('instrumentresearchersinput').value = '';
-                    document.getElementById('instrumentstudentsinput').value = '';
-                    document.getElementById('instrumentpublicationsinput').value = '';
-                    document.getElementById('instrumentsamplesinput').value = '';
-    
-                    updateMap();
-                },
-                error: (err) => {
-                    alert('Something went wrong');
-                }
-            });
-        } else {
-            alert('Please fill in all fields');
-        }
-    }
-    
-    const newFacilityButton = document.getElementById('createfacility')
-    
-    if (newFacilityButton) {
-        newFacilityButton.addEventListener('click', (event) => {
-            addFacility();
-        });
-    };
 
     map.on('load', function () {
         map.loadImage(
