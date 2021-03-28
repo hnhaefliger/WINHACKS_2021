@@ -1,1 +1,1 @@
-web: gunicorn enigma:app
+web: python enigma/manage.py
