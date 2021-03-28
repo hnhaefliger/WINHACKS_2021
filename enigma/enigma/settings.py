@@ -25,7 +25,7 @@ SECRET_KEY = '_pa0%7@hgrlat*zvm+$+7d9svq)--jui#7_br_2%*njq@tpehb' # this is bad 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['dataturawinhacks.herokuapp.com']
 
 # Application definition
 
