@@ -152,3 +152,6 @@ REST_FRAMEWORK = {
 
 import mimetypes
 mimetypes.add_type("text/css", ".css", True)
+
+import django_heroku
+django_heroku.settings(locals())
