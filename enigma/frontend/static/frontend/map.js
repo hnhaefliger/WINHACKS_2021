@@ -433,7 +433,7 @@ navigator.geolocation.getCurrentPosition(position => {
     var map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/light-v10',
-        center: [position.coords.longitude, position.coords.latitude],
+        center: [0, 0],
         zoom: 5,
         cluster: false
     });
