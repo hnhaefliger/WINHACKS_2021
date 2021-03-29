@@ -429,145 +429,143 @@ if (newFacilityButton) {
     });
 };
 
-navigator.geolocation.getCurrentPosition(position => { 
-    var map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/light-v10',
-        center: [0, 0],
-        zoom: 5,
-        cluster: false
-    });
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/light-v10',
+    center: [0, 0],
+    zoom: 5,
+    cluster: false
+});
 
-    const updateMap = () => {
-        getFacilities();
-        getInstruments();
-        getEquipment();
+const updateMap = () => {
+    getFacilities();
+    getInstruments();
+    getEquipment();
 
-        map.getSource('places').setData({
-            'type': 'FeatureCollection',
-            'features': formatFeatures(),
-        })
-    }
+    map.getSource('places').setData({
+        'type': 'FeatureCollection',
+        'features': formatFeatures(),
+    })
+}
 
-    updateMapFunc = updateMap;
+updateMapFunc = updateMap;
 
-    map.on('load', function () {
-        map.loadImage(
-            'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
-            function (error, image) {
-                if (error) throw error;
-                map.addImage('custom-marker', image);
-                map.addSource('places', {
-                    'type': 'geojson',
-                    cluster: false,
-                    clusterMinPoints: 1000,
-                    clusterRadius: 1,
-                    'data': {
-                        'type': 'FeatureCollection',
-                        'features': [],
-                    }
-                });
+map.on('load', function () {
+    map.loadImage(
+        'https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png',
+        function (error, image) {
+            if (error) throw error;
+            map.addImage('custom-marker', image);
+            map.addSource('places', {
+                'type': 'geojson',
+                cluster: false,
+                clusterMinPoints: 1000,
+                clusterRadius: 1,
+                'data': {
+                    'type': 'FeatureCollection',
+                    'features': [],
+                }
+            });
                 
-                // Add a symbol layer
-                map.addLayer({
-                    'id': 'places',
-                    'type': 'symbol',
-                    'source': 'places',
-                    'layout': {
-                        'icon-image': 'custom-marker',
-                        'text-field': ['get', 'title'],
-                        'text-font': [
-                            'Open Sans Semibold',
-                            'Arial Unicode MS Bold'
-                        ],
-                        'text-offset': [0, 1.25],
-                        'text-anchor': 'top',
-                    }
-                });
+            // Add a symbol layer
+            map.addLayer({
+                'id': 'places',
+                'type': 'symbol',
+                'source': 'places',
+                'layout': {
+                    'icon-image': 'custom-marker',
+                    'text-field': ['get', 'title'],
+                    'text-font': [
+                        'Open Sans Semibold',
+                        'Arial Unicode MS Bold'
+                    ],
+                    'text-offset': [0, 1.25],
+                    'text-anchor': 'top',
+                }
+            });
 
-                map.on('click', 'places', function (e) {
-                    var coordinates = e.features[0].geometry.coordinates.slice();
-                    var description = e.features[0].properties.description;
+            map.on('click', 'places', function (e) {
+                var coordinates = e.features[0].geometry.coordinates.slice();
+                var description = e.features[0].properties.description;
                      
-                    // Ensure that if the map is zoomed out such that multiple
-                    // copies of the feature are visible, the popup appears
-                    // over the copy being pointed to.
-                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                    }
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
                      
-                    new mapboxgl.Popup()
-                    .setLngLat(coordinates)
-                    .setHTML(description)
-                    .addTo(map);
+                new mapboxgl.Popup()
+                .setLngLat(coordinates)
+                .setHTML(description)
+                .addTo(map);
 
-                    const buttons = document.getElementsByClassName("addinstrument");
+                const buttons = document.getElementsByClassName("addinstrument");
 
-                    for (let button of buttons) {
-                        button.addEventListener('click', (event) => {
-                            addInstrument();
-                        });
-                    };
+                for (let button of buttons) {
+                    button.addEventListener('click', (event) => {
+                        addInstrument();
+                    });
+                };
 
-                    const usebuttons = document.getElementsByClassName("bookequipment");
+                const usebuttons = document.getElementsByClassName("bookequipment");
 
-                    for (let button of usebuttons) {
-                        button.addEventListener('click', (event) => {
-                            if (button.classList.contains('btn-success')) {
-                                button.classList.add('btn-danger');
-                                button.classList.remove('btn-success');
-                                button.innerHTML = 'In use'
-                                $.ajax({
-                                    type: 'PATCH',
-                                    url: 'api/equipment/' + button.value + '/',
-                                    headers: {'X-CSRFToken': csrftoken},
-                                    data: {
-                                        'in_use': true,
-                                    },
-                                    dataType: "json",
-                                    success: (res) => {
-                                        updateMapFunc();
-                                    },
-                                    error: (err) => {
-                                        alert('Something went wrong');
-                                    }
-                                });
-                            } else {
-                                button.classList.add('btn-success');
-                                button.classList.remove('btn-danger');
-                                button.innerHTML = 'Free'
-                                $.ajax({
-                                    type: 'PATCH',
-                                    url: 'api/equipment/' + button.value + '/',
-                                    headers: {'X-CSRFToken': csrftoken},
-                                    data: {
-                                        'in_use': false,
-                                    },
-                                    dataType: "json",
-                                    success: (res) => {
-                                        updateMapFunc();
-                                    },
-                                    error: (err) => {
-                                        alert('Something went wrong');
-                                    }
-                                });
-                            }
-                        });
-                    };
-                });
+                for (let button of usebuttons) {
+                    button.addEventListener('click', (event) => {
+                        if (button.classList.contains('btn-success')) {
+                            button.classList.add('btn-danger');
+                            button.classList.remove('btn-success');
+                            button.innerHTML = 'In use'
+                            $.ajax({
+                                type: 'PATCH',
+                                url: 'api/equipment/' + button.value + '/',
+                                headers: {'X-CSRFToken': csrftoken},
+                                data: {
+                                    'in_use': true,
+                                },
+                                dataType: "json",
+                                success: (res) => {
+                                    updateMapFunc();
+                                },
+                                error: (err) => {
+                                    alert('Something went wrong');
+                                }
+                            });
+                        } else {
+                            button.classList.add('btn-success');
+                            button.classList.remove('btn-danger');
+                            button.innerHTML = 'Free'
+                            $.ajax({
+                                type: 'PATCH',
+                                url: 'api/equipment/' + button.value + '/',
+                                headers: {'X-CSRFToken': csrftoken},
+                                data: {
+                                    'in_use': false,
+                                },
+                                dataType: "json",
+                                success: (res) => {
+                                    updateMapFunc();
+                                },
+                                error: (err) => {
+                                    alert('Something went wrong');
+                                }
+                            });
+                        }
+                    });
+                };
+            });
                      
-                // Change the cursor to a pointer when the mouse is over the places layer.
-                map.on('mouseenter', 'places', function () {
-                    map.getCanvas().style.cursor = 'pointer';
-                });
+            // Change the cursor to a pointer when the mouse is over the places layer.
+            map.on('mouseenter', 'places', function () {
+                map.getCanvas().style.cursor = 'pointer';
+            });
                      
-                // Change it back to a pointer when it leaves.
-                map.on('mouseleave', 'places', function () {
-                    map.getCanvas().style.cursor = '';
-                });
+            // Change it back to a pointer when it leaves.
+            map.on('mouseleave', 'places', function () {
+                map.getCanvas().style.cursor = '';
+            });
 
-                updateMapFunc();
-            }
-        );
-    });
+            updateMapFunc();
+        }
+    );
 });
