@@ -432,7 +432,7 @@ if (newFacilityButton) {
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/light-v10',
-    center: [0, 0],
+    center: [40, 105],
     zoom: 5,
     cluster: false
 });
